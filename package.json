@@ -1,0 +1,26 @@
+{
+  "name": "sample",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "karma start",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w"
+  },
+  "dependencies": {
+    "systemjs": "^0.19.27"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.5.47",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-remap-istanbul": "^0.1.1",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-systemjs": "^0.13.0",
+    "tslint": "^5.1.0",
+    "typescript": "^2.2.2"
+  }
+}
