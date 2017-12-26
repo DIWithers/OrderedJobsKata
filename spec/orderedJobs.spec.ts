@@ -7,7 +7,10 @@ describe("Ordered Jobs  ", () => {
         expect(OrderedJobs.getSequence("a => ")).toBe("a");
     });
     it("result should be a sequence containing all three jobs abc in no significant order when: a => , b => ,c => ", () => {
-        expect(OrderedJobs.getSequence("a => \n b => \n c=> \n ")).toBe("abc");
+        expect(OrderedJobs.getSequence("a => \n b => \n c => ")).toBe("abc");
+    });
+    it("result should be a sequence that positions c before b, when: a => , b => c, c => ", () => {
+        expect(OrderedJobs.getSequence("a => \n b => c \n c => ")).toBe("acb");
     });
 
 });
