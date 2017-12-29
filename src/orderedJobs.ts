@@ -1,5 +1,5 @@
 export class OrderedJobs {
-
+    private static numberOfJobsOrdered: number = 0;
     static getSequence(jobs: string): string {
         let jobsDependencies: any = this.getJobDependencies(jobs);
         let sequence: any = [];
@@ -7,6 +7,7 @@ export class OrderedJobs {
         if (this.jobHasInvalidDependency(jobsDependencies)) return "Error: Jobs cannot depend on themselves.";
         this.addJobsWithNoDependencies(jobsDependencies, sequence);
         this.addJobsWithDependencies(jobsDependencies, sequence);
+        if (this.numberOfJobsOrdered > sequence.length) return "Error: Jobs cannot have circular dependencies."
         return sequence.toString().replace(/,/g, "");
     }
 
@@ -17,17 +18,23 @@ export class OrderedJobs {
     private static addJobsWithDependencies(jobsDependencies: any, sequence: any): any {
         jobsDependencies.forEach((job: any) => {
             if (job.dependency !== undefined) {
-                if (sequence.indexOf(job.dependency) === -1) sequence.push(job.dependency);
+                if (sequence.indexOf(job.dependency) === -1) {
+                    sequence.push(job.dependency);
+                }
                 let whereToInsert: number = sequence.indexOf(job.dependency) + 1;
-                if (sequence.indexOf(job.name) === -1) sequence.splice(whereToInsert, 0, job.name);
+                if (sequence.indexOf(job.name) === -1) {
+                    sequence.splice(whereToInsert, 0, job.name);
+                    this.numberOfJobsOrdered ++;
+                }
             }
         });
     }
 
     private static addJobsWithNoDependencies(jobsDependencies: any, sequence: any): any {
         jobsDependencies.forEach((job: any) => {
-            if (job.dependency === undefined && sequence.indexOf(job.name) === -1) sequence.push(job.name);
-
+            if (job.dependency === undefined && sequence.indexOf(job.name) === -1) {
+                sequence.push(job.name);
+            }
         });
     }
 
@@ -36,7 +43,7 @@ export class OrderedJobs {
         jobsDependencies = jobsDependencies.map((job: any) => {
             let newJob: any = job.replace(/\W+/g, "");
             return {name: newJob[0], dependency: newJob[1]};
-        })
+        });
         return jobsDependencies;
     }
 }
