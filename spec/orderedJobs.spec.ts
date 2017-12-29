@@ -12,5 +12,8 @@ describe("Ordered Jobs  ", () => {
     it("result should be a sequence that positions c before b, when: a => , b => c, c => ", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => ")).toBe("acb");
     });
+    it("result should be a sequence that positions f before c, c before b, b before e and a before d, when: a => , b => c, c => f, d => a, e => b, f => ", () => {
+        expect(OrderedJobs.getSequence("a => , b => c, c => f, d => a, e => b, f => ")).toBe("adfcbe");
+    });
 
 });

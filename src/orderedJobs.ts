@@ -17,7 +17,7 @@ export class OrderedJobs {
         return "";
     }
 
-    private static addJobsWithNoDependencies(jobsDependencies: any, sequence: any) {
+    private static addJobsWithNoDependencies(jobsDependencies: any, sequence: any): any {
         jobsDependencies.forEach((job: any) => {
             console.log(job);
             if (job.dependency === undefined && sequence.indexOf(job.name) === -1) sequence.push(job.name);
