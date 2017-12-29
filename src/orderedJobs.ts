@@ -6,6 +6,8 @@ export class OrderedJobs {
         this.addJobsWithNoDependencies(jobsDependencies, sequence);
         jobsDependencies.forEach((job: any) => {
             if (job.dependency !== undefined) {
+                if (sequence.indexOf(job.dependency) === -1) sequence.push(job.dependency);
+                console.log(sequence);
                 let whereToInsert: number = sequence.indexOf(job.dependency) + 1;
                 console.log(whereToInsert);
                 sequence.splice(whereToInsert, 0, job.name);
@@ -26,11 +28,11 @@ export class OrderedJobs {
     }
 
     private static getJobDependencies(jobs: string): any {
-        let jobsSequence: any = jobs.split("\n");
-        jobsSequence = jobsSequence.map((job: any) => {
+        let jobsDependencies: any = jobs.split("\n");
+        jobsDependencies = jobsDependencies.map((job: any) => {
             let newJob: any = job.replace(/\W+/g, "");
             return {name: newJob[0], dependency: newJob[1]};
         })
-        return jobsSequence;
+        return jobsDependencies;
     }
 }

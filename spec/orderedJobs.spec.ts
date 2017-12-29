@@ -13,7 +13,7 @@ describe("Ordered Jobs  ", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => ")).toBe("acb");
     });
     it("result should be a sequence that positions f before c, c before b, b before e and a before d, when: a => , b => c, c => f, d => a, e => b, f => ", () => {
-        expect(OrderedJobs.getSequence("a => , b => c, c => f, d => a, e => b, f => ")).toBe("adfcbe");
+        expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => ")).toBe("adfcbe");
     });
 
 });
