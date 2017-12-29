@@ -3,20 +3,15 @@ export class OrderedJobs {
     static getSequence(jobs: string): string {
         let jobsDependencies: any = this.getJobDependencies(jobs);
         let sequence: any = [];
-        let invalidDependency: boolean = this.checkForInvalidDependency(jobsDependencies);
         if (jobs === "") return "";
-        if (invalidDependency) return "Error: Jobs cannot depend on themselves.";
+        if (this.jobHasInvalidDependency(jobsDependencies)) return "Error: Jobs cannot depend on themselves.";
         this.addJobsWithNoDependencies(jobsDependencies, sequence);
         this.addJobsWithDependencies(jobsDependencies, sequence);
         return sequence.toString().replace(/,/g, "");
     }
 
-    private static checkForInvalidDependency(jobsDependencies: any): boolean {
-        let invalidDependency: boolean = false;
-        jobsDependencies.forEach((job: any) => {
-            if (job.name === job.dependency) invalidDependency = true;
-        });
-        return invalidDependency;
+    private static jobHasInvalidDependency(jobsDependencies: any): boolean {
+        return Array.from(jobsDependencies.keys()).some((job: any) => jobsDependencies[job].name === jobsDependencies[job].dependency);
     }
 
     private static addJobsWithDependencies(jobsDependencies: any, sequence: any): any {
