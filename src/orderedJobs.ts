@@ -7,8 +7,12 @@ export class OrderedJobs {
         if (this.jobHasInvalidDependency(jobsDependencies)) return "Error: Jobs cannot depend on themselves.";
         this.addJobsWithNoDependencies(jobsDependencies, sequence);
         this.addJobsWithDependencies(jobsDependencies, sequence);
-        if (this.numberOfJobsOrdered > sequence.length) return "Error: Jobs cannot have circular dependencies."
+        if (this.circularDependencyDetected(sequence)) return "Error: Jobs cannot have circular dependencies."
         return sequence.toString().replace(/,/g, "");
+    }
+
+    private static circularDependencyDetected(sequence: any): boolean {
+        return this.numberOfJobsOrdered > sequence.length;
     }
 
     private static jobHasInvalidDependency(jobsDependencies: any): boolean {
