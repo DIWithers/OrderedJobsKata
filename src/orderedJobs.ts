@@ -3,11 +3,15 @@ export class OrderedJobs {
     static getSequence(jobStructure: string): string {
         let jobs: Array<Job> = this.createJobs(jobStructure);
         let sequence: Array = [];
+        this.addJobsWithoutDependencies(jobs, sequence);
+        if (jobStructure === "") return "";
+        return sequence.toString().replace(/,/g, "");
+    }
+
+    private static addJobsWithoutDependencies(jobs: Array<Job>, sequence: Array): void {
         for (let job of jobs) {
             sequence.push(job.name);
         }
-        if (jobStructure === "") return "";
-        return sequence.toString().replace(/,/g, "");
     }
     private static createJobs(jobStructure: string): Array<Job> {
         let jobs: any = jobStructure.split("\n");
