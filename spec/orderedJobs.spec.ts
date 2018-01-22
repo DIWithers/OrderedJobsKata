@@ -9,17 +9,4 @@ describe("Ordered Jobs  ", () => {
     it("result should be a sequence containing all three jobs abc in no significant order when: a => , b => ,c => ", () => {
         expect(OrderedJobs.getSequence("a => \n b => \n c => ")).toBe("abc");
     });
-    it("result should be a sequence that positions c before b, when: a => , b => c, c => ", () => {
-        expect(OrderedJobs.getSequence("a => \n b => c \n c => ")).toBe("acb");
-    });
-    it("result should be a sequence that positions f before c, c before b, b before e and a before d, when: a => , b => c, c => f, d => a, e => b, f => ", () => {
-        expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => ")).toBe("adfcbe");
-    });
-    it("result should be an error stating that jobs can’t depend on themselves", () => {
-        expect(OrderedJobs.getSequence("a => \n b => c \n c => c")).toBe("Error: Jobs cannot depend on themselves.");
-    });
-    it("result should be an error stating that jobs can’t have circular dependencies", () => {
-        expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => b")).toBe("Error: Jobs cannot have circular dependencies.");
-    });
-
 });

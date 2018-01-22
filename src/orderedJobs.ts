@@ -1,53 +1,31 @@
 export class OrderedJobs {
-    private static numberOfJobsOrdered: number = 0;
-    static getSequence(jobs: string): string {
-        let jobsDependencies: any = this.getJobDependencies(jobs);
-        let sequence: any = [];
-        if (jobs === "") return "";
-        if (this.jobHasInvalidDependency(jobsDependencies)) return "Error: Jobs cannot depend on themselves.";
-        this.addJobsWithNoDependencies(jobsDependencies, sequence);
-        this.addJobsWithDependencies(jobsDependencies, sequence);
-        if (this.circularDependencyDetected(sequence)) return "Error: Jobs cannot have circular dependencies."
+
+    static getSequence(jobStructure: string): string {
+        let jobs: Array<Job> = this.createJobs(jobStructure);
+        let sequence: Array = [];
+        for (let job of jobs) {
+            sequence.push(job.name);
+        }
+        if (jobStructure === "") return "";
         return sequence.toString().replace(/,/g, "");
     }
-
-    private static circularDependencyDetected(sequence: any): boolean {
-        return this.numberOfJobsOrdered > sequence.length;
-    }
-
-    private static jobHasInvalidDependency(jobsDependencies: any): boolean {
-        return Array.from(jobsDependencies.keys()).some((job: any) => jobsDependencies[job].name === jobsDependencies[job].dependency);
-    }
-
-    private static addJobsWithDependencies(jobsDependencies: any, sequence: any): any {
-        jobsDependencies.forEach((job: any) => {
-            if (job.dependency !== undefined) {
-                if (sequence.indexOf(job.dependency) === -1) {
-                    sequence.push(job.dependency);
-                }
-                let whereToInsert: number = sequence.indexOf(job.dependency) + 1;
-                if (sequence.indexOf(job.name) === -1) {
-                    sequence.splice(whereToInsert, 0, job.name);
-                    this.numberOfJobsOrdered ++;
-                }
-            }
+    private static createJobs(jobStructure: string): Array<Job> {
+        let jobs: any = jobStructure.split("\n");
+        jobs = jobs.map((job: string) => {
+            let extractedJobInfo: string = job.replace(/\W+/g, "");
+            return new Job(extractedJobInfo);
         });
-    }
-
-    private static addJobsWithNoDependencies(jobsDependencies: any, sequence: any): any {
-        jobsDependencies.forEach((job: any) => {
-            if (job.dependency === undefined && sequence.indexOf(job.name) === -1) {
-                sequence.push(job.name);
-            }
-        });
-    }
-
-    private static getJobDependencies(jobs: string): any {
-        let jobsDependencies: any = jobs.split("\n");
-        jobsDependencies = jobsDependencies.map((job: any) => {
-            let newJob: any = job.replace(/\W+/g, "");
-            return {name: newJob[0], dependency: newJob[1]};
-        });
-        return jobsDependencies;
+        return jobs;
     }
 }
+class Job {
+    public name: string;
+    public dependency: string;
+    constructor(extractedJobInfo: string) {
+        this.name = extractedJobInfo[0];
+        this.dependency = extractedJobInfo[1];
+    }
+}
+
+
+
