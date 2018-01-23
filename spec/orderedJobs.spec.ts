@@ -12,9 +12,9 @@ describe("Ordered Jobs  ", () => {
     it("result should be a sequence that positions c before b, when: a => , b => c, c => ", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => ")).toBe("acb");
     });
-    // it("result should be a sequence that positions f before c, c before b, b before e and a before d, when: a => , b => c, c => f, d => a, e => b, f => ", () => {
-    //     expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => ")).toBe("adfcbe");
-    // });
+    it("result should be a sequence that positions f before c, c before b, b before e and a before d, when: a => , b => c, c => f, d => a, e => b, f => ", () => {
+        expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => ")).toBe("adfcbe");
+    });
     // it("result should be an error stating that jobs can’t depend on themselves", () => {
     //     expect(OrderedJobs.getSequence("a => \n b => c \n c => c")).toBe("Error: Jobs cannot depend on themselves.");
     // });
