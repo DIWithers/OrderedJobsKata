@@ -6,6 +6,7 @@ export class OrderedJobs {
         let sequence: Array = [];
         this.addJobsWithoutDependencies(jobs, sequence);
         this.addJobsWithDependencies(jobs, sequence);
+        if (jobs.some((job: Job) => job.isSelfDependent())) return "Error: Jobs cannot depend on themselves.";
         console.log(sequence.toString().replace(/\W+/g, ""));
         return sequence.toString().replace(/,/g, "");
     }
@@ -53,6 +54,9 @@ class Job {
     }
     hasDependency(): boolean {
         return this.dependency !== undefined;
+    }
+    isSelfDependent(): boolean {
+        return this.name === this.dependency;
     }
 }
 
