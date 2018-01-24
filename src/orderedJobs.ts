@@ -7,6 +7,15 @@ export class OrderedJobs {
         this.addJobsWithoutDependencies(jobs, sequence);
         this.addJobsWithDependencies(jobs, sequence);
         if (jobs.some((job: Job) => job.isSelfDependent())) return "Error: Jobs cannot depend on themselves.";
+        let dependencyChain: Array = [];
+        let circularDependency: boolean;
+        for (let job of jobs) {
+            circularDependency = dependencyChain.find((dependency: string) => {return dependency === job.dependency; });
+            if (job.hasDependency()) dependencyChain.push(job.dependency);
+        }
+        if (circularDependency) return "Error: Jobs cannot have circular dependencies.";
+
+        console.log(dependencyChain);
         console.log(sequence.toString().replace(/\W+/g, ""));
         return sequence.toString().replace(/,/g, "");
     }
