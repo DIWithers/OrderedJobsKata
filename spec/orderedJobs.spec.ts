@@ -19,6 +19,9 @@ describe("Ordered Jobs  ", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => c")).toBe("Error: Jobs cannot depend on themselves.");
     });
     it("result should be an error stating that jobs can’t have circular dependencies", () => {
-        expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => b")).toBe("Error: Jobs cannot have circular dependencies.");
+        expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => \n f => b")).toBe("Error: Jobs cannot have circular dependencies.");
+    });
+    it("result should be an error stating that jobs can’t have circular dependencies", () => {
+        expect(OrderedJobs.getSequence("a => b \n b => c \n c => a")).toBe("Error: Jobs cannot have circular dependencies.");
     });
 });

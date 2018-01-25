@@ -7,19 +7,31 @@ export class OrderedJobs {
         this.addJobsWithoutDependencies(jobs, sequence);
         this.addJobsWithDependencies(jobs, sequence);
         if (jobs.some((job: Job) => job.isSelfDependent())) return "Error: Jobs cannot depend on themselves.";
-        let dependencyChain: Array = [];
-        let circularDependency: boolean;
-        for (let job of jobs) {
-            circularDependency = dependencyChain.find((dependency: string) => {return dependency === job.dependency; });
-            if (job.hasDependency()) dependencyChain.push(job.dependency);
-        }
-        if (circularDependency) return "Error: Jobs cannot have circular dependencies.";
-
-        console.log(dependencyChain);
+        let chain: Array = this.formDependencyChain(jobs);
+        if (this.circularDependencyDetected(chain)) return "Error: Jobs cannot have circular dependencies.";
         console.log(sequence.toString().replace(/\W+/g, ""));
         return sequence.toString().replace(/,/g, "");
     }
 
+    private static circularDependencyDetected(chain: Array<string>): boolean {
+        let lastJob: string = "";
+        let dependencyDetected: boolean = false;
+        for (let job of chain) {
+            if (job === lastJob)  dependencyDetected = true;
+            lastJob = job;
+        }
+        return dependencyDetected;
+    }
+
+    private static formDependencyChain(jobs: Array<Job>): Array<string> {
+        let chain: Array = [];
+        for (let job of jobs) {
+            if (job.hasDependency() && this.dependencyNotInSequence(chain, job)) chain.push(job.dependency);
+            let whereToInsert: number = chain.indexOf(job.dependency) + 1;
+            chain.splice(whereToInsert, 0, job.name);
+        }
+        return chain;
+    }
     private static addJobsWithDependencies(jobs: Array<Job>, sequence: Array): void {
         for (let job of jobs) {
             if (job.hasDependency() && this.dependencyNotInSequence(sequence, job)) sequence.push(job.dependency);
