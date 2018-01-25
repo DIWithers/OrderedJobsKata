@@ -10,7 +10,6 @@ export class OrderedJobs {
         if (this.selfDependencyDetected(jobs)) return "Error: Jobs cannot depend on themselves.";
         let chain: Array = this.formDependencyChain(jobs);
         if (this.circularDependencyDetected(chain)) return "Error: Jobs cannot have circular dependencies.";
-        console.log(sequence.toString().replace(/\W+/g, ""));
         return sequence.toString().replace(/,/g, "");
     }
     private static createJobs(jobStructure: string): Array<Job> {
@@ -83,10 +82,6 @@ class Job {
     }
     isSelfDependent(): boolean {
         return this.name === this.dependency;
-    }
-    hasInvalidSymbol(): boolean {
-        let regEx: RegExp = /[^a-zA-Z]/;
-        return regEx.test(this.name) || regEx.test(this.dependency);
     }
 }
 

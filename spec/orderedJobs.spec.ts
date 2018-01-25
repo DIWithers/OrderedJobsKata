@@ -11,9 +11,18 @@ describe("Ordered Jobs  ", () => {
     });
     it("result should be a sequence that positions c before b, when: a => , b => c, c => ", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => ")).toBe("acb");
+        //alt
+        let result: string = OrderedJobs.getSequence("a => \n b => c \n c => ");
+        expect(result.indexOf("c")).toBeLessThan(result.indexOf("b"));
     });
     it("result should be a sequence that positions f before c, c before b, b before e and a before d, when: a => , b => c, c => f, d => a, e => b, f => ", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => ")).toBe("adfcbe");
+        //alt
+        let result: string = OrderedJobs.getSequence("a => \n b => c \n c => f \n d => a \n e => b \n f => ");
+        expect(result.indexOf("c")).toBeLessThan(result.indexOf("b"));
+        expect(result.indexOf("f")).toBeLessThan(result.indexOf("c"));
+        expect(result.indexOf("a")).toBeLessThan(result.indexOf("d"));
+        expect(result.indexOf("b")).toBeLessThan(result.indexOf("e"));
     });
     it("result should be an error stating that jobs can’t depend on themselves", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => c")).toBe("Error: Jobs cannot depend on themselves.");
