@@ -24,4 +24,7 @@ describe("Ordered Jobs  ", () => {
     it("result should be an error stating that jobs can’t have circular dependencies", () => {
         expect(OrderedJobs.getSequence("a => b \n b => c \n c => a")).toBe("Error: Jobs cannot have circular dependencies.");
     });
+    it("result should be an error stating that job must be a letter of the alphabet if a job is the number 2", () => {
+        expect(OrderedJobs.getSequence("a => b \n b => c \n c => 2")).toBe("Error: Jobs must be a letter of the alphabet");
+    });
 });

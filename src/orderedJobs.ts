@@ -3,6 +3,7 @@ export class OrderedJobs {
     static getSequence(jobStructure: string): string {
         if (jobStructure === "") return "";
         let jobs: Array<Job> = this.createJobs(jobStructure);
+        if (this.invalidSyntaxDetected(jobs)) return "Error: Jobs must be a letter of the alphabet";
         let sequence: Array = [];
         this.addJobsWithoutDependencies(jobs, sequence);
         this.addJobsWithDependencies(jobs, sequence);
@@ -19,6 +20,12 @@ export class OrderedJobs {
             return new Job(extractedJobInfo);
         });
         return jobs;
+    }
+    private static invalidSyntaxDetected(jobs: Array<Job>): boolean {
+        return jobs.some((job: Job) => {
+            let regEx: RegExp = /[^a-zA-Z]/;
+            return regEx.test(job.name) || regEx.test(job.dependency);
+        });
     }
     private static addJobsWithoutDependencies(jobs: Array<Job>, sequence: Array): void {
         jobs.forEach((job: Job) => {
@@ -76,6 +83,10 @@ class Job {
     }
     isSelfDependent(): boolean {
         return this.name === this.dependency;
+    }
+    hasInvalidSymbol(): boolean {
+        let regEx: RegExp = /[^a-zA-Z]/;
+        return regEx.test(this.name) || regEx.test(this.dependency);
     }
 }
 
