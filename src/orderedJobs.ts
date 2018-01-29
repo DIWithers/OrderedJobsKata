@@ -1,15 +1,16 @@
 export class OrderedJobs {
 
+    private static circularDependencyDetected: boolean;
+
     static getSequence(jobStructure: string): string {
         if (jobStructure === "") return "";
+        let sequence: Array = [];
         let jobs: Array<Job> = this.createJobs(jobStructure);
         if (this.invalidSyntaxDetected(jobs)) return "Error: Jobs must be a letter of the alphabet";
-        let sequence: Array = [];
-        this.addJobsWithoutDependencies(jobs, sequence);
-        this.addJobsWithDependencies(jobs, sequence);
+        this.addJobs(jobs, sequence);
+        this.putJobsInOrder(jobs, sequence);
         if (this.selfDependencyDetected(jobs)) return "Error: Jobs cannot depend on themselves.";
-        let chain: Array = this.formDependencyChain(jobs);
-        if (this.circularDependencyDetected(chain)) return "Error: Jobs cannot have circular dependencies.";
+        if (this.circularDependencyDetected) return "Error: Jobs cannot have circular dependencies.";
         return sequence.toString().replace(/,/g, "");
     }
     private static createJobs(jobStructure: string): Array<Job> {
@@ -26,48 +27,37 @@ export class OrderedJobs {
             return regEx.test(job.name) || regEx.test(job.dependency);
         });
     }
-    private static addJobsWithoutDependencies(jobs: Array<Job>, sequence: Array): void {
+    private static addJobs(jobs: Array<Job>, sequence: Array): void {
         jobs.forEach((job: Job) => {
-            if (job.dependency === undefined) {
-                if (sequence.indexOf(job.name) === -1) {
-                    sequence.push(job.name);
-                }
-            }
+            sequence.push(job.name);
         });
     }
-    private static addJobsWithDependencies(jobs: Array<Job>, sequence: Array): void {
+    private static putJobsInOrder(jobs: Array<Job>, sequence: Array): void {
+        let dependencyChain: Array = [];
         for (let job of jobs) {
-            if (job.hasDependency() && this.dependencyNotInSequence(sequence, job)) sequence.push(job.dependency);
-            let whereToInsert: number = sequence.indexOf(job.dependency) + 1;
-            if (this.jobNotInSequence(sequence, job)) sequence.splice(whereToInsert, 0, job.name);
+            console.log(job, dependencyChain);
+            this.formDependencyChain(dependencyChain, job);
+            let jobPosition: number = sequence.indexOf(job.name);
+            let dependencyPosition: number = sequence.indexOf(job.dependency);
+            if (dependencyPosition > jobPosition) {
+                sequence.splice(dependencyPosition, 1);
+                sequence.splice(jobPosition, 0, job.dependency);
+            }
         }
     }
-    private static dependencyNotInSequence(sequence: Array, job: Job): boolean {
-        return sequence.indexOf(job.dependency) === -1;
+
+    private static formDependencyChain(dependencyChain: Array, job: Job): void {
+        this.checkForCircularDependency(dependencyChain, job);
+        if (job.hasDependency()) dependencyChain.push(job.dependency);
     }
-    private static jobNotInSequence(sequence: Array, job: Job): boolean {
-        return sequence.indexOf(job.name) === -1;
+
+    private static checkForCircularDependency(dependencyChain: Array, job: Job): void {
+        if (dependencyChain.indexOf(job.dependency) !== -1) {
+            this.circularDependencyDetected = true;
+        }
     }
     private static selfDependencyDetected(jobs: Array<Job>): boolean {
         return jobs.some((job: Job) => job.isSelfDependent());
-    }
-    private static formDependencyChain(jobs: Array<Job>): Array<string> {
-        let jobChain: Array = [];
-        for (let job of jobs) {
-            if (job.hasDependency() && this.dependencyNotInSequence(jobChain, job)) jobChain.push(job.dependency);
-            let whereToInsert: number = jobChain.indexOf(job.dependency) + 1;
-            jobChain.splice(whereToInsert, 0, job.name);
-        }
-        return jobChain;
-    }
-    private static circularDependencyDetected(chain: Array<string>): boolean {
-        let lastJob: string = "";
-        let dependencyDetected: boolean = false;
-        for (let job of chain) {
-            if (job === lastJob)  dependencyDetected = true;
-            lastJob = job;
-        }
-        return dependencyDetected;
     }
 }
 class Job {
