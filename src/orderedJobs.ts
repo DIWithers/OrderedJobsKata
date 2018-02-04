@@ -71,7 +71,6 @@ export class OrderedJobs {
     }
     private static circularDependencyDetected(dependencyChain: Map<string, Job>) {
         return Array.from(dependencyChain.keys()).some((job: string) => {
-            console.log(job, dependencyChain.get(job));
             return job, dependencyChain.get(job).includes(job);
         });
     }
