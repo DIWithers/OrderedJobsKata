@@ -1,18 +1,18 @@
 export class OrderedJobs {
 
-    private static circularDependencyDetected: boolean;
-
     static getSequence(jobStructure: string): string {
         if (jobStructure === "") return "";
         let sequence: Array = [];
         let jobs: Array<Job> = this.createJobs(jobStructure);
         if (this.invalidSyntaxDetected(jobs)) return "Error: Jobs must be a letter of the alphabet";
         this.addJobs(jobs, sequence);
-        this.putJobsInOrder(jobs, sequence);
         if (this.selfDependencyDetected(jobs)) return "Error: Jobs cannot depend on themselves.";
-        if (this.circularDependencyDetected) return "Error: Jobs cannot have circular dependencies.";
+        let dependencyChain: Map<string, Job> = this.formDependencyChain(jobs);
+        if(this.circularDependencyDetected(dependencyChain)) return "Error: Jobs cannot have circular dependencies.";
+        this.putJobsInOrder(jobs, sequence);
         return sequence.toString().replace(/,/g, "");
     }
+
     private static createJobs(jobStructure: string): Array<Job> {
         let jobs: any = jobStructure.split("\n");
         jobs = jobs.map((job: string) => {
@@ -32,11 +32,35 @@ export class OrderedJobs {
             sequence.push(job.name);
         });
     }
-    private static putJobsInOrder(jobs: Array<Job>, sequence: Array): void {
-        let dependencyChain: Array = [];
+    private static selfDependencyDetected(jobs: Array<Job>): boolean {
+        return jobs.some((job: Job) => job.isSelfDependent());
+    }
+
+    private static formDependencyChain(jobs: Array<Job>): Map {
+        let dependencyChain: Map<string, Job> = new Map<string, Job>();
         for (let job of jobs) {
-            console.log(job, dependencyChain);
-            this.formDependencyChain(dependencyChain, job);
+            if (job.hasDependency()) {
+                let jobsToAdd: Array<string> = this.addToChain(dependencyChain, job);
+                dependencyChain.set(job.dependency, jobsToAdd);
+            }
+        }
+        return dependencyChain;
+    }
+    private static addToChain(dependencyChain: Map<string, Job>, job): Array<string> {
+        let jobsToAdd: Array = [];
+        if (dependencyChain.has(job.name)){
+            jobsToAdd.push(job.name);
+            (dependencyChain.get(job.name)).forEach((job) => {
+                jobsToAdd.push(job)
+            });
+        }
+        else {
+            jobsToAdd.push(job.name);
+        }
+        return jobsToAdd;
+    }
+    private static putJobsInOrder(jobs: Array<Job>, sequence: Array): void {
+        for (let job of jobs) {
             let jobPosition: number = sequence.indexOf(job.name);
             let dependencyPosition: number = sequence.indexOf(job.dependency);
             if (dependencyPosition > jobPosition) {
@@ -45,19 +69,11 @@ export class OrderedJobs {
             }
         }
     }
-
-    private static formDependencyChain(dependencyChain: Array, job: Job): void {
-        this.checkForCircularDependency(dependencyChain, job);
-        if (job.hasDependency()) dependencyChain.push(job.dependency);
-    }
-
-    private static checkForCircularDependency(dependencyChain: Array, job: Job): void {
-        if (dependencyChain.indexOf(job.dependency) !== -1) {
-            this.circularDependencyDetected = true;
-        }
-    }
-    private static selfDependencyDetected(jobs: Array<Job>): boolean {
-        return jobs.some((job: Job) => job.isSelfDependent());
+    private static circularDependencyDetected(dependencyChain: Map<string, Job>) {
+        return Array.from(dependencyChain.keys()).some((job: string) => {
+            console.log(job, dependencyChain.get(job));
+            return job, dependencyChain.get(job).includes(job);
+        });
     }
 }
 class Job {

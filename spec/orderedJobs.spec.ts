@@ -27,6 +27,11 @@ describe("Ordered Jobs  ", () => {
     it("result should be an error stating that jobs can’t depend on themselves", () => {
         expect(OrderedJobs.getSequence("a => \n b => c \n c => c")).toBe("Error: Jobs cannot depend on themselves.");
     });
+    it("should position c before a and b", () => {
+        let result: string = OrderedJobs.getSequence("a => c\n b => c \n c => ");
+        expect(result.indexOf("c")).toBeLessThan(result.indexOf("a"));
+        expect(result.indexOf("c")).toBeLessThan(result.indexOf("b"));
+    });
     it("result should be an error stating that jobs can’t have circular dependencies", () => {
         expect(OrderedJobs.getSequence("a => b \n b => a ")).toBe("Error: Jobs cannot have circular dependencies.");
     });
