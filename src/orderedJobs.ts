@@ -14,8 +14,7 @@ export class OrderedJobs {
     }
 
     private static createJobs(jobStructure: string): Array<Job> {
-        let jobs: any = jobStructure.split("\n");
-        jobs = jobs.map((job: string) => {
+        let jobs: any = jobStructure.split("\n").map((job: string) => {
             let extractedJobInfo: string = job.replace(/\W+/g, "");
             return new Job(extractedJobInfo);
         });
@@ -59,6 +58,11 @@ export class OrderedJobs {
         }
         return jobsToAdd;
     }
+    private static circularDependencyDetected(dependencyChain: Map<string, Job>) {
+        return Array.from(dependencyChain.keys()).some((job: string) => {
+            return job, dependencyChain.get(job).includes(job);
+        });
+    }
     private static putJobsInOrder(jobs: Array<Job>, sequence: Array): void {
         for (let job of jobs) {
             let jobPosition: number = sequence.indexOf(job.name);
@@ -68,11 +72,6 @@ export class OrderedJobs {
                 sequence.splice(jobPosition, 0, job.dependency);
             }
         }
-    }
-    private static circularDependencyDetected(dependencyChain: Map<string, Job>) {
-        return Array.from(dependencyChain.keys()).some((job: string) => {
-            return job, dependencyChain.get(job).includes(job);
-        });
     }
 }
 class Job {
