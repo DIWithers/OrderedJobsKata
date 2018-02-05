@@ -52,10 +52,9 @@ export class OrderedJobs {
             (dependencyChain.get(job.name)).forEach((job) => {
                 jobsToAdd.push(job)
             });
+            return jobsToAdd;
         }
-        else {
-            jobsToAdd.push(job.name);
-        }
+        jobsToAdd.push(job.name);
         return jobsToAdd;
     }
     private static circularDependencyDetected(dependencyChain: Map<string, Job>) {
