@@ -21,18 +21,18 @@ Step 3 – Multiple Jobs
 
 Given the following job structure:
 
-a =>
-b =>
-c =>
+a => \n
+b => \n
+c => \n
 The result should be a sequence containing all three jobs abc in no significant order.
 
 Step 4 – Multiple Jobs, Single Dependency
 
 Given the following job structure:
 
-a =>
-b => c
-c =>
+a => \n
+b => c \n
+c => \n
 The result should be a sequence that positions c before b, containing all three jobs abc.
 
 
