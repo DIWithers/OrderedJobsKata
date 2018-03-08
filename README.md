@@ -12,27 +12,26 @@ Given you’re passed an empty string (no jobs), the result should be an empty s
 
 Step 2 – Single Job
 
-Given the following job structure:
+Given the following job structure:  
+a =>  
 
-a =>
 The result should be a sequence consisting of a single job a.
 
 Step 3 – Multiple Jobs
 
-Given the following job structure:
+Given the following job structure:  
 
-a => 
-b => 
-c => 
+a =>  
+b =>  
+c =>  
 The result should be a sequence containing all three jobs abc in no significant order.
 
 Step 4 – Multiple Jobs, Single Dependency
 
-Given the following job structure:
-
-a => 
-b => c 
-c => 
+Given the following job structure:  
+a =>  
+b => c  
+c =>  
 The result should be a sequence that positions c before b, containing all three jobs abc.
 
 
@@ -40,34 +39,31 @@ The result should be a sequence that positions c before b, containing all three 
 
 Step 5 – Multiple Jobs, Multiple Dependencies
 
-Given the following job structure:
-
-a =>
-b => c
-c => f
-d => a
-e => b
-f =>
+Given the following job structure:  
+a =>  
+b => c  
+c => f  
+d => a  
+e => b  
+f =>  
 The result should be a sequence that positions f before c, c before b, b before e and a before d containing all six jobs abcdef.
 
 Step 6 – Multiple Jobs, Self Referencing Dependency
 
-Given the following job structure:
-
-a =>
-b =>
-c => c
+Given the following job structure:  
+a =>  
+b =>  
+c => c  
 The result should be an error stating that jobs can’t depend on themselves.
 
 Step 7 – Multiple Jobs, Circular Dependency Chain
 
-Given the following job structure:
-
-a =>
-b => c
-c => f
-d => a
-e =>
+Given the following job structure:  
+a =>  
+b => c  
+c => f  
+d => a  
+e =>  
 f => b
 The result should be an error stating that jobs can’t have circular dependencies.
 
