@@ -64,7 +64,7 @@ b => c
 c => f  
 d => a  
 e =>  
-f => b
+f => b  
 The result should be an error stating that jobs can’t have circular dependencies.
 
 Borrowed from: http://invalidcast.tumblr.com/post/52980617776/the-ordered-jobs-kata
